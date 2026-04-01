@@ -7,7 +7,7 @@ from aiogram.filters import Command
 from aiogram.types import Message, BotCommand, InlineKeyboardMarkup, InlineKeyboardButton
 
 # Временно для тестов - замените на ваш токен или используйте .env
-BOT_TOKEN = os.getenv('BOT_TOKEN') or '8621381734:AAFEnnpyP71VCvXGjG09zyzyuE2oxJsmfXY'
+BOT_TOKEN = os.getenv('BOT_TOKEN') or 'ваш_токен_здесь'
 
 bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
