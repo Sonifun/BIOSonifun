@@ -17,7 +17,14 @@
    pip install -r requirements.txt
    ```
 3. Получите токен бота от [BotFather](https://t.me/botfather) в Telegram.
-4. Замените `'YOUR_BOT_TOKEN'` в файле `main.py` на ваш токен.
+4. Создайте файл `.env` на основе `.env.example` и укажите ваш токен:
+   ```
+   BOT_TOKEN=ваш_токен_здесь
+   ```
+5. Запустите бота:
+   ```
+   python main.py
+   ```
 5. Запустите бота:
    ```
    python main.py

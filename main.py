@@ -1,11 +1,14 @@
 import asyncio
+import os
 from aiogram import Bot, Dispatcher, Router
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.types import Message, BotCommand, InlineKeyboardMarkup, InlineKeyboardButton
 
-BOT_TOKEN = '8621381734:AAFEnnpyP71VCvXGjG09zyzyuE2oxJsmfXY'
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+if not BOT_TOKEN:
+    raise ValueError("BOT_TOKEN environment variable is not set")
 
 bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
@@ -73,7 +76,6 @@ async def contact(message: Message):
         "Discord: sonifunmt\n"
         "Email: sonifunmt@gmail.com\n"
         "Телефон: +7 995 684 98 36\n\n"
-        "Готов обсудить проект, автоматизацию и ИИ-решения."
     )
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text='Сайт', url=SITE_URL)],
