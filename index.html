@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Мой персональный сайт</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header class="hero" id="home">
+        <div class="container">
+            <h1>Привет, я Sonifun</h1>
+            <p>15 лет, Python/Java-разработчик. Пишу Telegram-боты, занимаюсь ИИ и дизайном.</p>
+            <a class="btn" href="about.html">Обо мне</a>
+            <a class="btn btn-light" href="programs.html">Программы</a>
+            <a class="btn" href="contact.html">Контакты</a>
+        </div>
+    </header>
+
+    <nav class="topnav" id="navbar">
+        <div class="container nav-wrap">
+            <a href="index.html" class="logo">Sonifun</a>
+            <div class="menu">
+                <a href="about.html">Обо мне</a>
+                <a href="programs.html">Программы</a>
+                <a href="contact.html">Контакты</a>
+                <a href="snake.html">Змейка</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section id="about" class="section">
+            <h2>Обо мне</h2>
+            <p>Меня зовут Денис. Я живу в России, мне 15 лет (день рождения 12.10). Учусь на Python и Java разработчика.</p>
+            <p>Уже создавал несколько небольших программ на Python, работал с текстами и промтами для ИИ, сейчас также практикуюсь в дизайне.</p>
+            <p>Люблю музыку: Ado, Восход, KSB musik и другие. Говорю по-русски, но могу переписываться на английском.</p>
+            <ul>
+                <li>Python, Java</li>
+                <li>Telegram Bot API</li>
+                <li>ИИ / промты / дизайн</li>
+            </ul>
+        </section>
+
+        <section id="programs" class="section">
+            <h2>Мои программы</h2>
+            <div class="grid3">
+                <article class="card">
+                    <h3>Telegram-бот</h3>
+                    <p>Инлайн-меню, webhook, работа с базами, платежи, группы и каналы.</p>
+                </article>
+                <article class="card">
+                    <h3>Сайт-визитка</h3>
+                    <p>Современная лендинг-страница для бизнеса или персонального бренда.</p>
+                </article>
+                <article class="card">
+                    <h3>CRM-система</h3>
+                    <p>Учет задач, автоматизация продаж, интеграции с 1С/Google Sheets.</p>
+                </article>
+            </div>
+        </section>
+
+
+
+        <section id="contact" class="section">
+            <h2>Контакты</h2>
+            <p>Email: <a href="mailto:sonifunmt@gmail.com">sonifunmt@gmail.com</a></p>
+            <p>Telegram: <a href="https://t.me/SonifunM">@SonifunM</a></p>
+            <p>Телефон: +7 995 684 98 36</p>
+            <p>GitHub: <a href="https://github.com/Sonifun">github.com/Sonifun</a></p>
+            <div class="social">
+                <a href="https://t.me/SonifunM">Telegram</a>
+                <a href="https://github.com/Sonifun">GitHub</a>
+            </div>
+            <p class="note">Напиши мне в любой удобный мессенджер, если хочешь заказ/сотрудничество.</p>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">© 2026 Sonifun. Все права защищены.</div>
+    </footer>
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

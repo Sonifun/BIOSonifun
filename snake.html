@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Змейка - Sonifun</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        .game-container { text-align: center; margin-top: 2rem; }
+        canvas { background: rgba(15,23,42,0.96); border: 1px solid rgba(255,255,255,0.18); border-radius: 0.8rem; }
+        .hint { color: #cbd5e1; margin-top: 0.7rem; }
+    </style>
+</head>
+<body>
+    <nav class="topnav" id="navbar">
+        <div class="container nav-wrap">
+            <a href="index.html" class="logo">Sonifun</a>
+            <div class="menu">
+                <a href="index.html">Главная</a>
+                <a href="about.html">Обо мне</a>
+                <a href="programs.html">Программы</a>
+                <a href="contact.html">Контакты</a>
+                <a href="snake.html">Змейка</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="section">
+            <h2>Мини-игра: Змейка</h2>
+            <p>Управление: стрелками или WASD. Собирай еду, избегай тела змеи.</p>
+            <div class="game-container">
+                <canvas id="snakeGame" width="400" height="400"></canvas>
+                <div class="game-controls">
+                    <button id="startBtn" class="btn">Старт</button>
+                    <button id="restartBtn" class="btn btn-light">Перезапустить</button>
+                    <span id="status" style="color:#e5e7eb; margin-left:1rem;">Статус: готов</span>
+                </div>
+                <div class="control-table">
+                    <h4>Управление</h4>
+                    <table>
+                        <tr><td>↑</td><td>W</td><td>вверх</td></tr>
+                        <tr><td>↓</td><td>S</td><td>вниз</td></tr>
+                        <tr><td>←</td><td>A</td><td>влево</td></tr>
+                        <tr><td>→</td><td>D</td><td>вправо</td></tr>
+                    </table>
+                </div>
+                <p class="hint" id="hint">Нажми Старт чтобы начать.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">© 2026 Sonifun. Все права защищены.</div>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('snakeGame');
+        const ctx = canvas.getContext('2d');
+        const gridSize = 20;
+        const maxX = canvas.width / gridSize;
+        const maxY = canvas.height / gridSize;
+
+        let snake = [{x: 8, y: 8}];
+        let dir = {x: 1, y: 0};
+        let food = {x: 12, y: 8};
+        let score = 0;
+        let gameOver = false;
+        let running = false;
+        let intervalId = null;
+
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const statusSpan = document.getElementById('status');
+        const hint = document.getElementById('hint');
+
+        const HIGH_KEY = 'snake-highscore-sonifun';
+        let highscore = parseInt(localStorage.getItem(HIGH_KEY) || '0', 10);
+
+        function wrap(value, max) {
+            if (value < 0) return max - 1;
+            if (value >= max) return 0;
+            return value;
+        }
+
+        function draw() {
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Сетка
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x <= canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y <= canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = '#34d399';
+            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+
+            ctx.fillStyle = '#facc15';
+            snake.forEach((seg, i) => {
+                ctx.fillStyle = i === 0 ? '#fb7185' : '#facc15';
+                ctx.fillRect(seg.x * gridSize, seg.y * gridSize, gridSize, gridSize);
+            });
+
+            if (gameOver) {
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '20px Inter, sans-serif';
+                ctx.fillText('Game Over! Нажми Перезапустить', 30, 210);
+                stopGame();
+                return;
+            }
+
+            const head = {
+                x: wrap(snake[0].x + dir.x, maxX),
+                y: wrap(snake[0].y + dir.y, maxY)
+            };
+
+            if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+                gameOver = true;
+                updateStatus();
+                return;
+            }
+
+            snake.unshift(head);
+
+            if (head.x === food.x && head.y === food.y) {
+                score += 1;
+                food = { x: Math.floor(Math.random() * maxX), y: Math.floor(Math.random() * maxY) };
+            } else {
+                snake.pop();
+            }
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '16px Inter, sans-serif';
+            ctx.fillText('Счет: ' + score, 10, 18);
+            ctx.fillText('Рекорд: ' + highscore, 280, 18);
+        }
+
+        function updateStatus() {
+            if (gameOver) {
+                statusSpan.textContent = 'Статус: проигрыш';
+            } else if (running) {
+                statusSpan.textContent = 'Статус: игра идет';
+            } else {
+                statusSpan.textContent = 'Статус: готов';
+            }
+        }
+
+        function startGame() {
+            if (running) return;
+            if (gameOver) reset();
+            running = true;
+            startBtn.textContent = 'Пауза';
+            hint.textContent = 'Игра идёт! WASD/стрелки управляют, R - перезапуск.';
+            if (!intervalId) intervalId = setInterval(draw, 100);
+            updateStatus();
+        }
+
+        function stopGame() {
+            running = false;
+            startBtn.textContent = 'Старт';
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
+            if (score > highscore) {
+                highscore = score;
+                localStorage.setItem(HIGH_KEY, highscore);
+            }
+            updateStatus();
+        }
+
+        function reset() {
+            snake = [{x: 8, y: 8}];
+            dir = {x: 1, y: 0};
+            food = {x: 12, y: 8};
+            score = 0;
+            gameOver = false;
+            running = false;
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
+            startBtn.textContent = 'Старт';
+            hint.textContent = 'Нажми Старт чтобы начать.';
+            updateStatus();
+            draw();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+            const keys = ['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd', 'r'];
+
+            if (keys.includes(key)) {
+                e.preventDefault();
+            }
+
+            if (key === 'r') {
+                reset();
+                return;
+            }
+
+            if (!running) return;
+
+            if ((key === 'arrowup' || key === 'w') && dir.y === 0) dir = {x: 0, y: -1};
+            if ((key === 'arrowdown' || key === 's') && dir.y === 0) dir = {x: 0, y: 1};
+            if ((key === 'arrowleft' || key === 'a') && dir.x === 0) dir = {x: -1, y: 0};
+            if ((key === 'arrowright' || key === 'd') && dir.x === 0) dir = {x: 1, y: 0};
+        });
+
+        startBtn.addEventListener('click', () => {
+            if (running) {
+                stopGame();
+            } else {
+                startGame();
+            }
+        });
+
+        restartBtn.addEventListener('click', () => {
+            reset();
+        });
+
+        reset();
+    </script>
+</body>
+</html>
