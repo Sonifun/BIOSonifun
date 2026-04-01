@@ -6,9 +6,8 @@ from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.types import Message, BotCommand, InlineKeyboardMarkup, InlineKeyboardButton
 
-BOT_TOKEN = os.getenv('BOT_TOKEN')
-if not BOT_TOKEN:
-    raise ValueError("BOT_TOKEN environment variable is not set")
+# Временно для тестов - замените на ваш токен или используйте .env
+BOT_TOKEN = os.getenv('BOT_TOKEN') or '8621381734:AAFEnnpyP71VCvXGjG09zyzyuE2oxJsmfXY'
 
 bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
@@ -19,7 +18,6 @@ SNAKE_URL = SITE_URL + '/snake.html'
 
 COMMANDS = [
     BotCommand(command='portfolio', description='Портфолио'),
-    BotCommand(command='programs', description='Мои программы'),
     BotCommand(command='snake', description='Играть в змейку'),
     BotCommand(command='contact', description='Как связаться'),
     BotCommand(command='links', description='Ссылки на портфолио и соцсети')
@@ -32,7 +30,6 @@ async def welcome(message: Message):
         "<b>Привет!</b>\n"
         "Используй команды:\n"
         "• /portfolio — перейти на моё портфолио\n"
-        "• /programs — детали по проектам\n"
         "• /snake — играть в змейку\n"
         "• /contact — контакты\n"
         "• /links — ссылки на соцсети и ресурсы\n"
@@ -54,19 +51,6 @@ async def portfolio(message: Message):
         [InlineKeyboardButton(text='Играть в змейку', url=SNAKE_URL)],
     ])
     await bot.send_message(message.chat.id, portfolio_text, reply_markup=keyboard)
-
-@router.message(Command("programs"))
-async def programs(message: Message):
-    print('Успех! программа запущена')
-    programs_text = (
-        "<b>Мои программы</b>\n"
-        "1. Telegram-бот для бизнеса (инлайн-меню, webhooks, базы).\n"
-        "2. Сайт-визитка на Flask/FastAPI.\n"
-        "3. Система учёта задач и CRM-бот.\n"
-        "4. Автоматизация рекламы и аналитика.\n\n"
-        "Подробности — /links"
-    )
-    await bot.send_message(message.chat.id, programs_text)
 
 @router.message(Command("contact"))
 async def contact(message: Message):
@@ -93,13 +77,19 @@ async def snake(message: Message):
 
 @router.message(Command("links"))
 async def links(message: Message):
+    links_text = (
+        "<b>Мои ресурсы и контакты</b>\n\n"
+        "<b>Портфолио:</b> Полный сайт с проектами\n"
+        "<b>Игра:</b> Мини-игра Змейка\n"
+        "<b>Telegram:</b> Пиши мне напрямую\n"
+        "<b>GitHub:</b> Код и репозитории\n\n"
+        "Выбери ссылку ниже:"
+    )
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='Сайт', url=SITE_URL)],
-        [InlineKeyboardButton(text='Змейка', url=SNAKE_URL)],
-        [InlineKeyboardButton(text='Telegram', url='https://t.me/SonifunM')],
-        [InlineKeyboardButton(text='GitHub', url='https://github.com/Sonifun')],
+        [InlineKeyboardButton(text='Портфолио', url=SITE_URL), InlineKeyboardButton(text='Змейка', url=SNAKE_URL)],
+        [InlineKeyboardButton(text='Telegram', url='https://t.me/SonifunM'), InlineKeyboardButton(text='GitHub', url='https://github.com/Sonifun')],
     ])
-    await bot.send_message(message.chat.id, '🌐 Полезные ссылки:', reply_markup=keyboard)
+    await bot.send_message(message.chat.id, links_text, reply_markup=keyboard)
 
 dp.include_router(router)
 
